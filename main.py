@@ -2,10 +2,9 @@ import requests
 import datetime
 import traceback
 import time
-import os
 from keep_alive import keep_alive
 
-# اگر متغیر محیطی استفاده نمی‌کنی، مستقیم مقدار بده:
+# استفاده مستقیم از توکن و آیدی کانال
 TELEGRAM_BOT_TOKEN = "8041985955:AAGNPL_dWWWI5AWlYFue5NxkNOXsYqBOmiw"
 TELEGRAM_CHANNEL_ID = "@PumpGuardians"
 
