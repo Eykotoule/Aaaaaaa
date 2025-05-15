@@ -1,4 +1,3 @@
-
 import requests
 import datetime
 import traceback
@@ -6,8 +5,9 @@ import time
 import os
 from keep_alive import keep_alive
 
-TELEGRAM_BOT_TOKEN = os.getenv("8041985955:AAGNPL_dWWWI5AWlYFue5NxkNOXsYqBOmiw")
-TELEGRAM_CHANNEL_ID = os.getenv("@PumpGuardians")
+# اگر متغیر محیطی استفاده نمی‌کنی، مستقیم مقدار بده:
+TELEGRAM_BOT_TOKEN = "8041985955:AAGNPL_dWWWI5AWlYFue5NxkNOXsYqBOmiw"
+TELEGRAM_CHANNEL_ID = "@PumpGuardians"
 
 SEEN_MINTS = set()
 
@@ -55,29 +55,16 @@ def format_token_message(info):
             age_str = f"{age_minutes} min ago"
 
         message = (
-            f"<b>PUMP GUARDIANS AI</b>
-
-"
-            f"<b>{name} / {symbol}</b>
-"
-            f"{green_circles}
-
-"
-            f"💵 <b>Price:</b> ${price_usd:.4f} ({price_sol:.4f} SOL)
-"
-            f"💰 <b>Market Cap:</b> ${market_cap:,.0f}
-"
-            f"📈 <b>Volume:</b> {volume:,.0f} SOL
-"
-            f"👥 <b>Holders:</b> {holders}
-"
-            f"⏱️ <b>Age:</b> {age_str}
-"
-            f"🌐 <b>Website:</b> {website}
-"
-            f"🐦 <b>Twitter:</b> {twitter}
-
-"
+            f"<b>PUMP GUARDIANS AI</b>\n\n"
+            f"<b>{name} / {symbol}</b>\n"
+            f"{green_circles}\n\n"
+            f"💵 <b>Price:</b> ${price_usd:.4f} ({price_sol:.4f} SOL)\n"
+            f"💰 <b>Market Cap:</b> ${market_cap:,.0f}\n"
+            f"📈 <b>Volume:</b> {volume:,.0f} SOL\n"
+            f"👥 <b>Holders:</b> {holders}\n"
+            f"⏱️ <b>Age:</b> {age_str}\n"
+            f"🌐 <b>Website:</b> {website}\n"
+            f"🐦 <b>Twitter:</b> {twitter}\n\n"
             f"<a href='https://pump.fun/{address}'>Buy</a> | "
             f"<a href='https://www.dexscreener.com/solana/{address}'>Chart</a> | "
             f"<a href='https://birdeye.so/token/{address}'>More Info</a>"
