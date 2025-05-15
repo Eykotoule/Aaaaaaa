@@ -17,18 +17,14 @@ def send_telegram_message(text):
         "parse_mode": "HTML",
         "disable_web_page_preview": False
     }
-    print("[DEBUG] Sending message to Telegram...")
-    print(f"[DEBUG] Payload: {payload}")
     try:
         response = requests.post(url, data=payload)
         print(f"[DEBUG] Telegram response status: {response.status_code}")
-        print(f"[DEBUG] Telegram response body: {response.text}")
-
         if response.status_code != 200:
-            print("[ERROR] Failed to send message to Telegram.")
+            print("[ERROR] Failed to send message to Telegram:", response.text)
         else:
             print("[SUCCESS] Message sent successfully.")
-    except Exception as e:
+    except Exception:
         print("[EXCEPTION] Telegram send failed:")
         traceback.print_exc()
 
@@ -41,7 +37,6 @@ def format_token_message(info):
         if address in SEEN_MINTS:
             print(f"[SKIP] Already seen token: {address}")
             return None
-
         SEEN_MINTS.add(address)
 
         name = info.get("name", "?")
@@ -54,7 +49,13 @@ def format_token_message(info):
         twitter = info.get("twitter", "Not available")
         website = info.get("website", "Not available")
         created_at = int(info.get("created_at", 0))
-        green_circles = "🟢" * int(info.get("score", 3))
+
+        # safe score
+        try:
+            score = int(info.get("score") or 3)
+        except:
+            score = 3
+        green_circles = "🟢" * score
 
         age_str = "Unknown"
         if created_at:
@@ -77,7 +78,6 @@ def format_token_message(info):
             f"<a href='https://www.dexscreener.com/solana/{address}'>Chart</a> | "
             f"<a href='https://birdeye.so/token/{address}'>More Info</a>"
         )
-        print("[DEBUG] Message formatted successfully.")
         return message
 
     except Exception as e:
@@ -103,10 +103,13 @@ def fetch_latest_tokens():
         return []
 
 def main_loop():
+    send_telegram_message("✅ PumpGuardians bot started successfully.")
     while True:
         print("===========================================")
         print("[INFO] Checking for new tokens...")
         tokens = fetch_latest_tokens()
+
+        send_telegram_message(f"ℹ️ Fetched {len(tokens)} trending tokens.")
 
         for token in tokens:
             address = token.get("address")
@@ -121,7 +124,6 @@ def main_loop():
             print(f"[DEBUG] Fetching full info for {address}...")
             try:
                 response = requests.get(full_info_url)
-                print(f"[DEBUG] Detail API status: {response.status_code}")
                 if response.status_code != 200:
                     print(f"[ERROR] Failed to get token detail: {response.text}")
                     continue
@@ -130,10 +132,13 @@ def main_loop():
                 if msg:
                     send_telegram_message(msg)
                 else:
-                    print(f"[SKIP] Message was None for: {address}")
+                    print(f"[SKIP] Message was None for: {address}, name: {info.get('name', '?')}")
             except:
                 print(f"[EXCEPTION] Error processing token {address}")
                 traceback.print_exc()
+
+        # Reset SEEN_MINTS for testing — remove this in production
+        SEEN_MINTS.clear()
 
         print("[SLEEP] Sleeping 20 seconds...\n")
         time.sleep(20)
